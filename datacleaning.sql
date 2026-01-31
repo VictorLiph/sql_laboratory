@@ -42,5 +42,38 @@ IN (
   WHERE t.rownum > 1
 );
 
+-- Fiding null and blank values
+
+select t1.company, 
+       t1.industry, 
+	   t2.company, 
+	   t2.industry 
+	   
+from layoffs_staging as t1
+join layoffs_staging as t2
+	on t1.company = t2.company
+	and t1.location = t2.location
+
+where (t1.industry is null or t1.industry = '')
+and t2.industry is not null;
+
+-- Standardizing to nulls
+
+update layoffs_staging 
+set industry = null
+where industry = '';
+
+-- Populating missing industries values 
+
+UPDATE layoffs_staging AS t1
+SET industry = t2.industry
+FROM layoffs_staging AS t2
+WHERE t1.company = t2.company
+  AND t1.industry IS NULL
+  AND t2.industry IS NOT NULL;
+
+select * from layoffs_staging
+where industry = null or industry = '';
+
 
 
